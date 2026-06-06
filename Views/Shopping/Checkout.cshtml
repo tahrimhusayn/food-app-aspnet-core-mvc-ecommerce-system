@@ -1,0 +1,50 @@
+@model Food_App.Models.Cart
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container">
+    <h2>Checkout</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="ProcessOrder" method="post">
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Shipping Address</label>
+                            <textarea id="address" name="address" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Place Order</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>@item.Product.Name x @item.Quantity</span>
+                            <span>$@((item.Product.Price * item.Quantity).ToString("F2"))</span>
+                        </div>
+                    }
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong>$@Model.CartItems.Sum(ci => ci.Product.Price * ci.Quantity).ToString("F2")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container">
+    <h2>My Orders</h2>
+    
+    @if (Model?.Any() == true)
+    {
+        <div class="row">
+            @foreach (var orderGroup in Model)
+            {
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>Order #@orderGroup.Order.OrderId</h5>
+                            <div>
+                                <span class="badge bg-@(orderGroup.Order.Status == "Pending" ? "warning" : orderGroup.Order.Status == "Completed" ? "success" : "secondary")">@orderGroup.Order.Status</span>
+                                <span class="ms-2">Total: $@orderGroup.Total.ToString("F2")</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Order Date:</strong> @orderGroup.Order.OrderDate?.ToString("MMM dd, yyyy HH:mm")</p>
+                                    <p><strong>Customer Address:</strong> @orderGroup.Order.Address</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Items Count:</strong> @orderGroup.Items.Count</p>
+                                    <p><strong>Customer ID:</strong> @orderGroup.Order.UserId</p>
+                                </div>
+                            </div>
+                            
+                            <h6>Order Items:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in orderGroup.Items)
+                                        {
+                                            <tr>
+                                                <td>@item.Product.Name</td>
+                                                <td>@item.Quantity</td>
+                                                <td>$@item.Price.ToString("F2")</td>
+                                                <td>$@((item.Price * item.Quantity).ToString("F2"))</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h4>No orders found</h4>
+            <p>You haven't received any orders yet.</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,189 @@
+@model Food_App.Controllers.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid">
+    <h2>Admin Dashboard</h2>
+    <p class="text-muted">System Overview</p>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalUsers</h4>
+                            <p>Total Users</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalSellers.Count</h4>
+                            <p>Sellers</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-store fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalCustomers.Count</h4>
+                            <p>Customers</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalProducts</h4>
+                            <p>Products</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-box fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalOrders</h4>
+                            <p>Orders</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>$@Model.TotalRevenue.ToString("F2")</h4>
+                            <p>Revenue</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Orders</h5>
+                    <a asp-controller="Dashboard" asp-action="AllOrders" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders.Any())
+                    {
+                        @foreach (var order in Model.RecentOrders.Take(5))
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>Order #@order.OrderId</strong>
+                                    <br>
+                                    <small class="text-muted">$@order.TotalAmount.ToString("F2") - @order.OrderDate?.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <span class="badge bg-@(order.Status == "Pending" ? "warning" : order.Status == "Completed" ? "success" : "secondary")">@order.Status</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No orders yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Products</h5>
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentProducts.Any())
+                    {
+                        @foreach (var product in Model.RecentProducts.Take(5))
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>@product.Name</strong>
+                                    <br>
+                                    <small class="text-muted">$@product.Price.ToString("F2") - Stock: @product.Stock</small>
+                                </div>
+                                <span class="badge bg-@(product.Status == "Active" ? "success" : "secondary")">@product.Status</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No products yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Admin Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a asp-controller="Dashboard" asp-action="AllUsers" class="btn btn-primary w-100 mb-2">Manage Users</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Dashboard" asp-action="AllOrders" class="btn btn-outline-primary w-100 mb-2">Manage Orders</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-info w-100 mb-2">Manage Products</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Categories" asp-action="Index" class="btn btn-outline-secondary w-100 mb-2">Manage Categories</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

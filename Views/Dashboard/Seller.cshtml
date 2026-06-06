@@ -1,0 +1,160 @@
+@model Food_App.Controllers.SellerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<div class="container-fluid">
+    <h2>Welcome, @Model.User.FirstName @Model.User.LastName</h2>
+    <p class="text-muted">Seller Dashboard</p>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalProducts</h4>
+                            <p>Total Products</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-box fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.ActiveProducts</h4>
+                            <p>Active Products</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@Model.TotalOrders</h4>
+                            <p>Total Orders</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>$@Model.TotalRevenue.ToString("F2")</h4>
+                            <p>Total Revenue</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Products</h5>
+                    <a asp-controller="Dashboard" asp-action="MyProducts" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentProducts.Any())
+                    {
+                        @foreach (var product in Model.RecentProducts)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>@product.Name</strong>
+                                    <br>
+                                    <small class="text-muted">$@product.Price.ToString("F2") - Stock: @product.Stock</small>
+                                </div>
+                                <span class="badge bg-@(product.Status == "Active" ? "success" : "secondary")">@product.Status</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No products yet.</p>
+                        <a asp-controller="Products" asp-action="Create" class="btn btn-primary">Add Your First Product</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Orders</h5>
+                    <a asp-controller="Dashboard" asp-action="MyOrders" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders.Any())
+                    {
+                        @foreach (var order in Model.RecentOrders.Take(5))
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>@order.Product.Name</strong>
+                                    <br>
+                                    <small class="text-muted">Qty: @order.Quantity - $@order.Price.ToString("F2")</small>
+                                </div>
+                                <span class="badge bg-@(order.Order.Status == "Pending" ? "warning" : order.Order.Status == "Completed" ? "success" : "secondary")">@order.Order.Status</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No orders yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a asp-controller="Products" asp-action="Create" class="btn btn-primary w-100 mb-2">Add New Product</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Dashboard" asp-action="MyProducts" class="btn btn-outline-primary w-100 mb-2">Manage Products</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Dashboard" asp-action="MyOrders" class="btn btn-outline-info w-100 mb-2">View Orders</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary w-100 mb-2">Browse All Products</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Food App</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        :root {
+            --mustard: #D4AF37;
+            --light-mustard: #F4E4BC;
+            --dark-mustard: #B8941F;
+            --white: #FFFFFF;
+            --light-gray: #F8F9FA;
+            --dark-gray: #6C757D;
+        }
+
+        body {
+            background-color: var(--white);
+            color: #333;
+        }
+
+        .navbar {
+            background-color: var(--white) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--mustard) !important;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: var(--mustard) !important;
+            }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--mustard) 0%, var(--light-mustard) 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .card {
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+        .card-header {
+            background-color: var(--light-mustard);
+            border-bottom: 2px solid var(--mustard);
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .btn-primary, .btn-mustard {
+            background-color: var(--mustard);
+            border-color: var(--mustard);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover, .btn-mustard:hover {
+                background-color: var(--dark-mustard);
+                border-color: var(--dark-mustard);
+                transform: translateY(-2px);
+            }
+
+        .btn-outline-primary {
+            color: var(--mustard);
+            border-color: var(--mustard);
+        }
+
+            .btn-outline-primary:hover {
+                background-color: var(--mustard);
+                border-color: var(--mustard);
+            }
+
+        .text-primary {
+            color: var(--mustard) !important;
+        }
+
+        .bg-primary, .bg-mustard {
+            background-color: var(--mustard) !important;
+        }
+
+        .bg-light-mustard {
+            background-color: var(--light-mustard) !important;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--mustard);
+                box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+            }
+
+        .footer {
+            background-color: var(--light-mustard);
+            color: #333;
+            padding: 20px 0;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--light-mustard);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--mustard);
+            font-size: 24px;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-mustard) 100%);
+            border: 2px solid var(--mustard);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 🔥 FLEX WRAPPER FIX -->
+    <div class="d-flex flex-column min-vh-100">
+
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-utensils me-2"></i>Food App
+                    </a>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home me-1"></i>Home
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Shopping" asp-action="Index">
+                                    <i class="fas fa-shopping-bag me-1"></i>Products
+                                </a>
+                            </li>
+
+                            @if (User.Identity.IsAuthenticated && !User.IsInRole("Seller") && !User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Shopping" asp-action="Cart">
+                                        <i class="fas fa-shopping-cart me-1"></i>Cart
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Shopping" asp-action="OrderHistory">
+                                        <i class="fas fa-history me-1"></i>Orders
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Seller"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown">
+                                        <i class="fas fa-store me-1"></i>Seller
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Seller">Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Products" asp-action="Create">Add Product</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="MyProducts">My Products</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="MyOrders">My Orders</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown">
+                                        <i class="fas fa-cog me-1"></i>Admin
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Admin">Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="AllUsers">Manage Users</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="AllOrders">Manage Orders</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Products" asp-action="Index">Manage Products</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Categories" asp-action="Index">Manage Categories</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                        </ul>
+
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- 🔥 MAIN FIX (IMPORTANT) -->
+        <main role="main" class="container flex-fill pb-3">
+            @RenderBody()
+        </main>
+
+        <footer class="footer mt-auto">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-utensils me-2"></i>Food App</h5>
+                        <p class="mb-0">Delicious food delivered to your doorstep</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">
+                            &copy; 2025 - Food App -
+                            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">
+                                Privacy
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

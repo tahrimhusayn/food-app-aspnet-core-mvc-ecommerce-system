@@ -1,0 +1,86 @@
+@model IEnumerable<Food_App.Models.Order>
+
+@{
+    ViewData["Title"] = "All Orders";
+}
+
+<div class="container">
+    <h2>All Orders</h2>
+    
+    @if (Model?.Any() == true)
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>#@order.OrderId</td>
+                            <td>@order.UserId</td>
+                            <td>@order.OrderDate?.ToString("MMM dd, yyyy")</td>
+                            <td>$@order.TotalAmount.ToString("F2")</td>
+                            <td>
+                                <select class="form-select form-select-sm" onchange="updateOrderStatus(@order.OrderId, this.value)">
+                                    <option value="Pending" selected="@(order.Status == "Pending")">Pending</option>
+                                    <option value="Processing" selected="@(order.Status == "Processing")">Processing</option>
+                                    <option value="Shipped" selected="@(order.Status == "Shipped")">Shipped</option>
+                                    <option value="Completed" selected="@(order.Status == "Completed")">Completed</option>
+                                    <option value="Cancelled" selected="@(order.Status == "Cancelled")">Cancelled</option>
+                                </select>
+                            </td>
+                            <td>@order.Address</td>
+                            <td>
+                                <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h4>No orders found</h4>
+            <p>There are no orders in the system yet.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function updateOrderStatus(orderId, status) {
+            fetch('/Dashboard/UpdateOrderStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({ orderId: orderId, status: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Order status updated successfully!');
+                } else {
+                    alert('Error updating order status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the order status.');
+            });
+        }
+    </script>
+}

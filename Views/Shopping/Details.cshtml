@@ -1,0 +1,78 @@
+@model Food_App.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name">
+            }
+            else
+            {
+                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                    <i class="fas fa-image fa-5x text-muted"></i>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            <h2>@Model.Name</h2>
+            <p class="text-muted">Category: @Model.Category?.Name</p>
+            <p class="lead">$@Model.Price.ToString("F2")</p>
+            <p>@Model.Description</p>
+            
+            <div class="mb-3">
+                <strong>Stock Available:</strong> @Model.Stock
+            </div>
+
+            @if (User.Identity.IsAuthenticated && !User.IsInRole("Seller") && !User.IsInRole("Admin"))
+            {
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity:</label>
+                    <input type="number" id="quantity" class="form-control" value="1" min="1" max="@Model.Stock" style="width: 100px;">
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="addToCart(@Model.ProductId)">Add to Cart</button>
+            }
+            else if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">Login to Purchase</a>
+            }
+
+            <div class="mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to Products</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function addToCart(productId) {
+            var quantity = document.getElementById('quantity').value;
+            
+            fetch('/Shopping/AddToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({ productId: productId, quantity: parseInt(quantity) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Item added to cart!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding to cart.');
+            });
+        }
+    </script>
+}
